@@ -17,6 +17,7 @@ def calibrate(images_path, file_name, width, height, cell_size):
                 [j*cell_size, i*cell_size, 0], dtype=np.float32)
     object_points = []  # 3d point in real world space
     imgage_points = []
+    cv2.namedWindow('img', cv2.WINDOW_KEEPRATIO)
     for image in all_files:
         img = cv2.imread(image)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -29,7 +30,7 @@ def calibrate(images_path, file_name, width, height, cell_size):
             img = cv2.drawChessboardCorners(
                 img, (width, height), corners2, ret)
             cv2.imshow('img', img)
-            cv2.waitKey(500)
+            cv2.waitKey(1)
     cv2.destroyAllWindows()
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
         object_points, imgage_points, gray.shape[::-1], None, None)
@@ -49,18 +50,13 @@ def calibrate(images_path, file_name, width, height, cell_size):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Program za kalibraciju kamere i čuvanje unutrašnjih parametara kamere',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument("-f", "--file_name",
-                        help="Ime rezultujućeg kalibracionog fajla")
-    parser.add_argument("-c", "--cell_size",
-                        help="Veličina ćelije u milimetrima", default=30)
-  
-    # images_path = "C:/Users/lazar/OneDrive/Documents/Programming/Python/DigitalizacijaPokreta/output/captures/images/950122061749"
     images_path = "./output/captures/images/950122061749"
     w, h = 8, 5
     cell_size = 30
     
-    output_calib_file = "./output/calib.yaml"
+    output_calib_file = "./output/calib_950122061749.yaml"
+    calibrate(images_path, output_calib_file, int(w), int(h), cell_size)
+    
+    images_path = "./output/captures/images/950122061707"
+    output_calib_file = "./output/calib_950122061707.yaml"
     calibrate(images_path, output_calib_file, int(w), int(h), cell_size)
